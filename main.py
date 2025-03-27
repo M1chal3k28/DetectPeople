@@ -61,7 +61,7 @@ def detect_person():
                 cv2.putText(image, f"Person: {confidence:.2f}", (x1, y1 - 10),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
-    return image, {"person_detected": people_detected }
+    return image, {"Detected": people_detected }
 
 # Returns json with true if person is in sight of view or false if not
 @app.route('/detect', methods=['GET'])
@@ -75,10 +75,11 @@ def detect():
 def detect_image():
     image, _ = detect_person()
     if image is None:
-        return "Błąd: Nie udało się pobrać obrazu", 500
+        return "Error: Can't download image from camera!", 500
 
     _, buffer = cv2.imencode('.jpg', image)
     return Response(buffer.tobytes(), mimetype='image/jpeg')
 
+# Flask main
 if __name__ == '__main__':
     app.run(debug=False)
