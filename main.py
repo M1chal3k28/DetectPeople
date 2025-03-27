@@ -26,7 +26,7 @@ model = YOLO("yolov8n.pt")
 # Function which reads image from camera
 def getImg():
     # TODO: Change url to existing and connected web cam on the device ! 
-    url = "http://10.154.231.94:8080/video"
+    url = "/"
     cap = cv2.VideoCapture(url)
     ret, frame = cap.read()
     cap.release()
