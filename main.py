@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, Response
 import cv2
+import torch
 
 # Utility to make rout accesible only on debug 
 from functools import wraps
@@ -22,15 +23,17 @@ app = Flask(__name__)
 
 # Load nano model of yolo version 8 smallest model for fastest calculations
 model = YOLO("yolov8n.pt")
+# Load model to gpu if available
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+model.to(device)
+
+# Load first available camera device
+# ! May not work if you have more than one camera
+cap = cv2.VideoCapture(0)
 
 # Function which reads image from camera
 def getImg():
-    # TODO: Change url to existing and connected web cam on the device ! 
-    url = "/"
-    cap = cv2.VideoCapture(url)
     ret, frame = cap.read()
-    cap.release()
-
     # Returns frame from camera to be tested
     return frame if ret else None
 
@@ -39,7 +42,32 @@ def detect_person():
     # Get image of interest
     image = getImg()
     if image is None:
-        return None, {"person_detected": False}
+        return None, {"Detected": False}
+
+    # Flag to return
+    people_detected = False
+    
+    # Run model
+    results = model(image)
+
+    # Check results for people
+    for r in results:
+        for box in r.boxes:
+            label = model.names[int(box.cls)]
+            confidence = box.conf[0]
+
+            # If person detected and confidence is greater than half report True
+            if label == "person" and confidence > 0.5:
+                people_detected = True
+
+    return {"Detected": people_detected }
+
+# Function that runs model to check if any people is in sight of view
+def detect_person_image():
+    # Get image of interest
+    image = getImg()
+    if image is None:
+        return None, {"Detected": False}
 
     # Flag to return
     people_detected = False
@@ -66,14 +94,14 @@ def detect_person():
 # Returns json with true if person is in sight of view or false if not
 @app.route('/detect', methods=['GET'])
 def detect():
-    _, result = detect_person()
+    result = detect_person()
     return jsonify(result)
 
 # Printst image in html (DEGUB ONLY) 
 @app.route('/detect_image', methods=['GET'])
 @debug_only
 def detect_image():
-    image, _ = detect_person()
+    image, _ = detect_person_image()
     if image is None:
         return "Error: Can't download image from camera!", 500
 
@@ -82,4 +110,4 @@ def detect_image():
 
 # Flask main
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)
