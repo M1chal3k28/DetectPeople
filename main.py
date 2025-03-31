@@ -110,4 +110,15 @@ def detect_image():
 
 # Flask main
 if __name__ == '__main__':
-    app.run(debug=True)
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--deploy', dest='isDeployed', type=int, help='Run in deployment/debug mode (0 - debug, 1 - deployment)')
+    args = parser.parse_args()
+
+    if (args.isDeployed) :
+        print("People detection is running in deployment mode")
+        from waitress import serve
+        # Run deploy on localhost
+        serve(app, host="127.0.0.1", port=8080)
+    else :
+        app.run(debug=True)
