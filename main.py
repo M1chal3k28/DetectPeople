@@ -46,6 +46,8 @@ def detect_person():
 
     # Flag to return
     people_detected = False
+    # Amount
+    people_amount = 0
     
     # Run model
     results = model(image)
@@ -59,8 +61,9 @@ def detect_person():
             # If person detected and confidence is greater than half report True
             if label == "person" and confidence > 0.5:
                 people_detected = True
+                people_amount+=1
 
-    return {"Detected": people_detected }
+    return {"Detected": people_detected, "Amount": people_amount}
 
 # Function that runs model to check if any people is in sight of view
 def detect_person_image():
