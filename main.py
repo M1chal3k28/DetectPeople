@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, Response
+from flask_cors import CORS
 import cv2
 import torch
 
@@ -20,6 +21,8 @@ from ultralytics import YOLO
 
 # Create app on Flask
 app = Flask(__name__)
+# CORS !!!!
+CORS(app)
 
 # Load nano model of yolo version 8 smallest model for fastest calculations
 model = YOLO("yolov8n.pt")
