@@ -44,7 +44,7 @@ Serwer działa na `127.0.0.1:8080` przy użyciu Waitress.
 
 ## Opis funkcji
 
-- **`detect_person()`** - Sprawdza, czy w obrazie z kamery znajduje się osoba.
+- **`detect_person()`** - Sprawdza, czy w obrazie z kamery znajdują sie ludzie, zwraca także ich ilość.
 - **`detect_person_image()`** - Dodatkowo rysuje ramki wokół wykrytych osób.
 - **`getImg()`** - Pobiera obraz z kamery.
 
