@@ -52,6 +52,11 @@ cap = None
 # Function which reads image from camera
 def getImg():
     ret, frame = cap.read()
+    if not ret:
+        # If camera dies during execution start restart script to restart API
+        print("Couldn't read frame from camera restarting !")
+        RESTART()
+        
     # Returns frame from camera to be tested
     return frame if ret else None
 
@@ -88,10 +93,6 @@ def detect_person_image():
     # Get image of interest
     image = getImg()
     if image is None:
-        # If camera dies during execution start restart script to restart API
-        print("Couldn't read frame from camera restarting !")
-        RESTART()
-
         return None, {"Detected": False}
 
     # Flag to return

@@ -16,7 +16,7 @@ set /a RESTARTS=%RESTARTS%+1
 :: After 5 unsuccessful restarts restart pc !
 if %RESTARTS% GEQ 5 (
     ECHO RESTARTS=0 > cache.txt
-    shutdown /r /t 0
+    shutdown /r /t 1
 )
 
 :: Save restart amount to the cache file
@@ -28,6 +28,6 @@ taskkill /FI "WINDOWTITLE eq PeopleDetection" /F
 :: Go to the root folder
 cd ..
 :: Start main again
-Scripts\python.exe main.py --deploy 1
+Scripts\python.exe main.py --deploy 1 --restart 1
 
 endlocal
