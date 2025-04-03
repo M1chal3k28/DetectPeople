@@ -2,6 +2,22 @@ from flask import Flask, jsonify, Response
 from flask_cors import CORS
 import cv2
 import torch
+import os
+
+# Title is mandatory for restart.bat script cause it terminates by name
+os.system("title PeopleDetection")
+
+# restarting API
+restart = False
+def RESTART():
+    global restart
+    if not restart: 
+        print("Restart not enabled !")
+        return
+    
+    # Only for windows run restart script
+    os.system("start /min Misc\\Restart.bat")
+
 
 # Utility to make rout accesible only on debug 
 from functools import wraps
@@ -30,9 +46,8 @@ model = YOLO("yolov8n.pt")
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 model.to(device)
 
-# Load first available camera device
-# ! May not work if you have more than one camera
-cap = cv2.VideoCapture(0)
+# Global camera variable
+cap = None
 
 # Function which reads image from camera
 def getImg():
@@ -73,6 +88,10 @@ def detect_person_image():
     # Get image of interest
     image = getImg()
     if image is None:
+        # If camera dies during execution start restart script to restart API
+        print("Couldn't read frame from camera restarting !")
+        RESTART()
+
         return None, {"Detected": False}
 
     # Flag to return
@@ -115,11 +134,27 @@ def detect_image():
     return Response(buffer.tobytes(), mimetype='image/jpeg')
 
 # Flask main
-if __name__ == '__main__':
+def main():
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument('--deploy', dest='isDeployed', type=int, help='Run in deployment/debug mode (0 - debug, 1 - deployment)')
+    parser.add_argument('--restart', dest='restartEnable', type=int, help="1 - API will try to recover from error warning, 0 - omit errors and warnings")
     args = parser.parse_args()
+
+    if args.restartEnable == 1:
+        # if restart is enabled change global flag
+        global restart
+        restart = True
+    
+    # Set Globally camera source
+    global cap
+    # Load first available camera device
+    # ! May not work if you have more than one camera
+    cap = cv2.VideoCapture(0)
+
+    if not cap.isOpened():
+        print("Couldn't load camera restarting !")
+        RESTART()
 
     if (args.isDeployed) :
         print("People detection is running in deployment mode")
@@ -128,3 +163,12 @@ if __name__ == '__main__':
         serve(app, host="127.0.0.1", port=8080)
     else :
         app.run(debug=True)
+
+    cap.release()
+    cv2.destroyAllWindows()
+
+    global model
+    del model
+
+if __name__ == '__main__':
+    main()
