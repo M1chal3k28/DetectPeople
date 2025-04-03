@@ -18,7 +18,7 @@ def RESTART():
     
     # Only for windows run restart script
     os.system("start /min Misc\\Restart.bat")
-    sys.exit(-1)
+    os._exit(-1)
     
 
 
