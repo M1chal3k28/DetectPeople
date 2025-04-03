@@ -16,7 +16,8 @@ set /a RESTARTS=%RESTARTS%+1
 :: After 5 unsuccessful restarts restart pc !
 if %RESTARTS% GEQ 5 (
     ECHO RESTARTS=0 > cache.txt
-    shutdown /r /t 1
+    shutdown /r /t 5
+    exit
 )
 
 :: Save restart amount to the cache file
