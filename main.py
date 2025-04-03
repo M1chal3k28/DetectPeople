@@ -3,6 +3,7 @@ from flask_cors import CORS
 import cv2
 import torch
 import os
+import sys
 
 # Title is mandatory for restart.bat script cause it terminates by name
 os.system("title PeopleDetection")
@@ -17,6 +18,8 @@ def RESTART():
     
     # Only for windows run restart script
     os.system("start /min Misc\\Restart.bat")
+    sys.exit(-1)
+    
 
 
 # Utility to make rout accesible only on debug 
@@ -56,7 +59,7 @@ def getImg():
         # If camera dies during execution start restart script to restart API
         print("Couldn't read frame from camera restarting !")
         RESTART()
-        
+
     # Returns frame from camera to be tested
     return frame if ret else None
 
