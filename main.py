@@ -3,7 +3,7 @@ from flask_cors import CORS
 import cv2
 import torch
 import os
-import sys
+import sys, time
 import logging
 
 # Logging config date time
@@ -45,8 +45,14 @@ def RESTART(message):
     
     logger.info("Restarting API")
 
+    sys.stderr.flush()
+    sys.stdout.flush()
+    for handler in logger.handlers:
+        handler.flush()
+
     # Only for windows run restart script
     os.system("start /min Misc\\Restart.bat")
+    time.sleep(0.5)
     os._exit(-1)
     
 
