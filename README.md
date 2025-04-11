@@ -40,6 +40,11 @@ Dostępne endpointy:
 python script.py --deploy 1
 ```
 
+### Tryb z restartem i loggowaniem !
+```bash
+python script.py --deploy 1 --restart 1 2>> errors
+```
+
 Serwer działa na `127.0.0.1:8080` przy użyciu Waitress.
 
 ## Opis funkcji
@@ -47,6 +52,15 @@ Serwer działa na `127.0.0.1:8080` przy użyciu Waitress.
 - **`detect_person()`** - Sprawdza, czy w obrazie z kamery znajdują sie ludzie, zwraca także ich ilość.
 - **`detect_person_image()`** - Dodatkowo rysuje ramki wokół wykrytych osób.
 - **`getImg()`** - Pobiera obraz z kamery.
+
+## Logi
+
+- API loguje na poziomie:
+    - Debug
+    - Error
+    - Warning
+    - Info
+- Do pliku **`logs`**, który stworzy się przy pierwszym uruchomieniu
 
 ## Uwagi
 

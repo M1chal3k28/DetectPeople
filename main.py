@@ -4,18 +4,47 @@ import cv2
 import torch
 import os
 import sys
+import logging
+
+# Logging config date time
+logging.basicConfig(
+    format='%(asctime)s %(levelname)-8s %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S',
+    filename="logs", level=logging.NOTSET)
+logging.captureWarnings(True)
+
+# Start logging system
+logger = logging.getLogger("ErrorLog")
+logger.setLevel(logging.NOTSET)
+
+# Log start
+logger.info("\n\n\n\nSTARTING !")
+
+# Unhandled exceptions will log error to the logger
+def handle_exception(exc_type, exc_value, exc_traceback):
+    if issubclass(exc_type, KeyboardInterrupt):
+        # Nie loguj Ctrl+C
+        sys.__excepthook__(exc_type, exc_value, exc_traceback)
+        return
+    logger.error("Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback))
+
+sys.excepthook = handle_exception
 
 # Title is mandatory for restart.bat script cause it terminates by name
 os.system("title PeopleDetection")
 
 # restarting API
 restart = False
-def RESTART():
+def RESTART(message):
+    logger.error(message)
+    
     global restart
     if not restart: 
-        print("Restart not enabled !")
+        logger.error("Restart not enabled ! ABORTING RESTART")
         return
     
+    logger.info("Restarting API")
+
     # Only for windows run restart script
     os.system("start /min Misc\\Restart.bat")
     os._exit(-1)
@@ -57,8 +86,7 @@ def getImg():
     ret, frame = cap.read()
     if not ret:
         # If camera dies during execution start restart script to restart API
-        print("Couldn't read frame from camera restarting !")
-        RESTART()
+        RESTART("Couldn't read frame from camera restarting !")
 
     # Returns frame from camera to be tested
     return frame if ret else None
@@ -157,11 +185,10 @@ def main():
     cap = cv2.VideoCapture(0)
 
     if not cap.isOpened():
-        print("Couldn't load camera restarting !")
-        RESTART()
+        RESTART("Couldn't load camera restarting !")
 
     if (args.isDeployed) :
-        print("People detection is running in deployment mode")
+        logger.info("People detection is running in deployment mode")
         from waitress import serve
         # Run deploy on localhost
         serve(app, host="127.0.0.1", port=8080)
