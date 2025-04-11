@@ -29,6 +29,6 @@ taskkill /FI "WINDOWTITLE eq PeopleDetection" /F
 :: Go to the root folder
 cd ..
 :: Start main again
-Scripts\python.exe main.py --deploy 1 --restart 1 2>> errors
+Scripts\python.exe main.py --deploy 1 --restart 1
 
 endlocal

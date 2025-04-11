@@ -40,10 +40,13 @@ Dostępne endpointy:
 python script.py --deploy 1
 ```
 
-### Tryb z restartem i loggowaniem !
-```bash
-python script.py --deploy 1 --restart 1 2>> errors
-```
+### Flaga restart
+
+- Automatyczne restartowanie API podczas problemów z kamerką
+    ```bash
+    python script.py --restart 1
+    ```
+
 
 Serwer działa na `127.0.0.1:8080` przy użyciu Waitress.
 

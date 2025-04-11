@@ -54,6 +54,7 @@ def RESTART(message):
     os.system("start /min Misc\\Restart.bat")
     time.sleep(0.5)
     os._exit(-1)
+    sys.exit(-1)
     
 
 
